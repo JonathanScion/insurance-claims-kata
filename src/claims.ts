@@ -1,4 +1,3 @@
-// Types
 export type IncidentType = 'accident' | 'theft' | 'fire' | 'water damage';
 
 export interface Policy {
@@ -58,7 +57,17 @@ export function evaluateClaim(claim: Claim, policies: Policy[]): ClaimResult {
     };
   }
 
+  // Calculate payout
   const payout = claim.amountClaimed - policy.deductible;
+
+  // Guard: payout must be positive
+  if (payout <= 0) {
+    return {
+      approved: false,
+      payout: 0,
+      reasonCode: 'ZERO_PAYOUT',
+    };
+  }
 
   return {
     approved: true,
