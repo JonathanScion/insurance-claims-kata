@@ -1,3 +1,4 @@
+// third commit: replacing the evaludateClaim with actual implementation
 export type IncidentType = 'accident' | 'theft' | 'fire' | 'water damage';
 
 export interface Policy {
@@ -22,7 +23,15 @@ export interface ClaimResult {
   reasonCode: string;
 }
 
-// Function stub - not implemented yet
+// Evaluate a claim against available policies
 export function evaluateClaim(claim: Claim, policies: Policy[]): ClaimResult {
-  throw new Error('Not implemented');
+  const policy = policies.find(p => p.policyId === claim.policyId);
+
+  const payout = claim.amountClaimed - policy!.deductible;
+
+  return {
+    approved: true,
+    payout,
+    reasonCode: 'APPROVED',
+  };
 }
