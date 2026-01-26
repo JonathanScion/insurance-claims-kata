@@ -1,3 +1,4 @@
+// Types
 export type IncidentType = 'accident' | 'theft' | 'fire' | 'water damage';
 
 export interface Policy {
@@ -32,6 +33,19 @@ export function evaluateClaim(claim: Claim, policies: Policy[]): ClaimResult {
       approved: false,
       payout: 0,
       reasonCode: 'POLICY_NOT_FOUND',
+    };
+  }
+
+  // Guard: policy must be active on incident date
+  const incidentTime = claim.incidentDate.getTime();
+  const isActive = incidentTime >= policy.startDate.getTime() 
+                && incidentTime <= policy.endDate.getTime();
+  
+  if (!isActive) {
+    return {
+      approved: false,
+      payout: 0,
+      reasonCode: 'POLICY_INACTIVE',
     };
   }
 
