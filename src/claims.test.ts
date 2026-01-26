@@ -148,4 +148,33 @@ test.describe('Claims Processing', () => {
     expect(result.reasonCode).toBe('ZERO_PAYOUT');
   });
 
+  test('should cap payout at coverage limit', () => {
+    // Arrange
+    const policies: Policy[] = [
+      {
+        policyId: 'POL123',
+        startDate: new Date('2023-01-01'),
+        endDate: new Date('2024-01-01'),
+        deductible: 500,
+        coverageLimit: 10000,
+        coveredIncidents: ['accident', 'fire'],
+      },
+    ];
+
+    const claim: Claim = {
+      policyId: 'POL123',
+      incidentType: 'fire',
+      incidentDate: new Date('2023-06-15'),
+      amountClaimed: 12000, // 12000 - 500 = 11500, but limit is 10000
+    };
+
+    // Act
+    const result = evaluateClaim(claim, policies);
+
+    // Assert
+    expect(result.approved).toBe(true);
+    expect(result.payout).toBe(10000); // Capped at coverage limit
+    expect(result.reasonCode).toBe('APPROVED');
+  });
+
 });
