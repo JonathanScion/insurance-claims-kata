@@ -119,4 +119,33 @@ test.describe('Claims Processing', () => {
     expect(result.reasonCode).toBe('NOT_COVERED');
   });
 
+  test('should return zero payout when claim amount is less than deductible', () => {
+    // Arrange
+    const policies: Policy[] = [
+      {
+        policyId: 'POL123',
+        startDate: new Date('2023-01-01'),
+        endDate: new Date('2024-01-01'),
+        deductible: 500,
+        coverageLimit: 10000,
+        coveredIncidents: ['accident', 'fire'],
+      },
+    ];
+
+    const claim: Claim = {
+      policyId: 'POL123',
+      incidentType: 'fire',
+      incidentDate: new Date('2023-06-15'),
+      amountClaimed: 300, // Less than $500 deductible
+    };
+
+    // Act
+    const result = evaluateClaim(claim, policies);
+
+    // Assert
+    expect(result.approved).toBe(false);
+    expect(result.payout).toBe(0);
+    expect(result.reasonCode).toBe('ZERO_PAYOUT');
+  });
+
 });
