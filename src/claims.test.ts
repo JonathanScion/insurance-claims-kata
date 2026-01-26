@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { evaluateClaim, Claim, Policy } from './claims';
-//commit 4: reject claim
+//adding a test for inactive policy. this will fail
 test.describe('Claims Processing', () => {
   
   test('should approve a valid claim and calculate correct payout', () => {
@@ -41,24 +41,4 @@ test.describe('Claims Processing', () => {
         endDate: new Date('2024-01-01'),
         deductible: 500,
         coverageLimit: 10000,
-        coveredIncidents: ['accident', 'fire'],
-      },
-    ];
-
-    const claim: Claim = {
-      policyId: 'UNKNOWN_POLICY',
-      incidentType: 'fire',
-      incidentDate: new Date('2023-06-15'),
-      amountClaimed: 3000,
-    };
-
-    // Act
-    const result = evaluateClaim(claim, policies);
-
-    // Assert
-    expect(result.approved).toBe(false);
-    expect(result.payout).toBe(0);
-    expect(result.reasonCode).toBe('POLICY_NOT_FOUND');
-  });
-
-});
+        coveredIncidents:
