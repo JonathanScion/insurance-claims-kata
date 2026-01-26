@@ -1,4 +1,3 @@
-// third commit: replacing the evaludateClaim with actual implementation
 export type IncidentType = 'accident' | 'theft' | 'fire' | 'water damage';
 
 export interface Policy {
@@ -27,7 +26,16 @@ export interface ClaimResult {
 export function evaluateClaim(claim: Claim, policies: Policy[]): ClaimResult {
   const policy = policies.find(p => p.policyId === claim.policyId);
 
-  const payout = claim.amountClaimed - policy!.deductible;
+  // Guard: policy must exist
+  if (!policy) {
+    return {
+      approved: false,
+      payout: 0,
+      reasonCode: 'POLICY_NOT_FOUND',
+    };
+  }
+
+  const payout = claim.amountClaimed - policy.deductible;
 
   return {
     approved: true,
