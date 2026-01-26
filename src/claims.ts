@@ -1,3 +1,4 @@
+// Types
 export type IncidentType = 'accident' | 'theft' | 'fire' | 'water damage';
 
 export interface Policy {
@@ -45,6 +46,15 @@ export function evaluateClaim(claim: Claim, policies: Policy[]): ClaimResult {
       approved: false,
       payout: 0,
       reasonCode: 'POLICY_INACTIVE',
+    };
+  }
+
+  // Guard: incident type must be covered
+  if (!policy.coveredIncidents.includes(claim.incidentType)) {
+    return {
+      approved: false,
+      payout: 0,
+      reasonCode: 'NOT_COVERED',
     };
   }
 
