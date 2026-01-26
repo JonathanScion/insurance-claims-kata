@@ -1,10 +1,12 @@
 //the spec at https://github.com/uplift-delivery/katas/tree/main/insurance
 
 some assumptions I made:
-Policy not found → POLICY_NOT_FOUND reason code
-Dates are inclusive (incident on endDate is still covered)
-Capped payout still returns APPROVED
-Check order: exists → active → covered → calculate
+
+- Policy not found → POLICY_NOT_FOUND reason code
+- Dates are inclusive (incident on endDate is still covered)
+- Capped payout still returns APPROVED
+- Check order: exists → active → covered → calculate
+
 
 my TDD-based work:
 In TDD, we always start with a failing test. This proves:
