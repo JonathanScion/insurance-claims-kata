@@ -1,4 +1,4 @@
-//the spec at https://github.com/uplift-delivery/katas/tree/main/insurance
+The spec is at https://github.com/uplift-delivery/katas/tree/main/insurance
 
 some assumptions I made:
 
