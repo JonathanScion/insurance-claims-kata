@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { evaluateClaim, Claim, Policy } from './claims';
-//test passing. also fixed a syntax error i had before (messed up the file before commiting)
+
 test.describe('Claims Processing', () => {
   
   test('should approve a valid claim and calculate correct payout', () => {
@@ -88,6 +88,35 @@ test.describe('Claims Processing', () => {
     expect(result.approved).toBe(false);
     expect(result.payout).toBe(0);
     expect(result.reasonCode).toBe('POLICY_INACTIVE');
+  });
+
+  test('should reject claim when incident type is not covered', () => {
+    // Arrange
+    const policies: Policy[] = [
+      {
+        policyId: 'POL123',
+        startDate: new Date('2023-01-01'),
+        endDate: new Date('2024-01-01'),
+        deductible: 500,
+        coverageLimit: 10000,
+        coveredIncidents: ['accident', 'fire'], // Does NOT include 'water damage'
+      },
+    ];
+
+    const claim: Claim = {
+      policyId: 'POL123',
+      incidentType: 'water damage', // Not covered!
+      incidentDate: new Date('2023-06-15'),
+      amountClaimed: 3000,
+    };
+
+    // Act
+    const result = evaluateClaim(claim, policies);
+
+    // Assert
+    expect(result.approved).toBe(false);
+    expect(result.payout).toBe(0);
+    expect(result.reasonCode).toBe('NOT_COVERED');
   });
 
 });

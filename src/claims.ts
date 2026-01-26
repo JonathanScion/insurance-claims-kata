@@ -1,4 +1,3 @@
-// Types
 export type IncidentType = 'accident' | 'theft' | 'fire' | 'water damage';
 
 export interface Policy {
