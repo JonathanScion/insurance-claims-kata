@@ -24,10 +24,12 @@ export interface ClaimResult {
 }
 
 // Evaluate a claim against available policies
+// My assumption: Check order is exists → active → covered → calculate
 export function evaluateClaim(claim: Claim, policies: Policy[]): ClaimResult {
   const policy = policies.find(p => p.policyId === claim.policyId);
 
   // Guard: policy must exist
+  // My assumption: Policy not found → POLICY_NOT_FOUND reason code (not in original spec, but necessary for real-world usage)
   if (!policy) {
     return {
       approved: false,
@@ -37,8 +39,9 @@ export function evaluateClaim(claim: Claim, policies: Policy[]): ClaimResult {
   }
 
   // Guard: policy must be active on incident date
+  // My assumption: Dates are inclusive (incident on endDate is still covered)
   const incidentTime = claim.incidentDate.getTime();
-  const isActive = incidentTime >= policy.startDate.getTime() 
+  const isActive = incidentTime >= policy.startDate.getTime()
                 && incidentTime <= policy.endDate.getTime();
   
   if (!isActive) {
@@ -71,6 +74,7 @@ export function evaluateClaim(claim: Claim, policies: Policy[]): ClaimResult {
   }
 
   // Cap payout at coverage limit
+  // My assumption: Capped payout still returns APPROVED
   const payout = Math.min(calculatedPayout, policy.coverageLimit);
 
   return {
