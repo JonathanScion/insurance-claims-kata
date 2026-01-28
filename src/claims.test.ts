@@ -3,6 +3,7 @@ import { evaluateClaim, Claim, Policy } from './claims';
 
 test.describe('Claims Processing', () => {
   
+  // Business Rule: Payout = amountClaimed - deductible
   test('should approve a valid claim and calculate correct payout', () => {
     // Arrange
     const policies: Policy[] = [
@@ -32,6 +33,7 @@ test.describe('Claims Processing', () => {
     expect(result.reasonCode).toBe('APPROVED');
   });
 
+  // My assumption: Policy not found → POLICY_NOT_FOUND reason code (not in original spec)
   test('should reject claim when policy is not found', () => {
     // Arrange
     const policies: Policy[] = [
@@ -61,6 +63,7 @@ test.describe('Claims Processing', () => {
     expect(result.reasonCode).toBe('POLICY_NOT_FOUND');
   });
 
+  // Business Rule: The policy must be active on the incidentDate
   test('should reject claim when policy is not active on incident date', () => {
     // Arrange
     const policies: Policy[] = [
@@ -90,6 +93,7 @@ test.describe('Claims Processing', () => {
     expect(result.reasonCode).toBe('POLICY_INACTIVE');
   });
 
+  // Business Rule: The incidentType must be included in the policy's coveredIncidents
   test('should reject claim when incident type is not covered', () => {
     // Arrange
     const policies: Policy[] = [
@@ -119,6 +123,7 @@ test.describe('Claims Processing', () => {
     expect(result.reasonCode).toBe('NOT_COVERED');
   });
 
+  // Business Rule: If payout is zero or negative, return 0 with reasonCode: ZERO_PAYOUT
   test('should return zero payout when claim amount is less than deductible', () => {
     // Arrange
     const policies: Policy[] = [
@@ -148,6 +153,7 @@ test.describe('Claims Processing', () => {
     expect(result.reasonCode).toBe('ZERO_PAYOUT');
   });
 
+  // Business Rule: The payout may not exceed the coverageLimit
   test('should cap payout at coverage limit', () => {
     // Arrange
     const policies: Policy[] = [
